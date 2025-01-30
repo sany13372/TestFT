@@ -11,7 +11,7 @@ import {options} from "../../utils/botOptions";
 
 export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { awaitingChatGPTResponse: boolean, context: string, type: string, waitingForInput: boolean }>) => async (msg: TelegramBot.Message) => {
     const chatId = msg.chat.id;
-    const isSubscribe = await subscriptionUpdateMiddleware(chatId) || false;
+    const isSubscribe = await subscriptionUpdateMiddleware(chatId,msg?.chat?.username || '') || false;
 
     // Проверяем, если пользователь уже в процессе ввода данных
     const existingState = userStates.get(chatId);

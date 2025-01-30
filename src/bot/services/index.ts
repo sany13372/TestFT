@@ -21,9 +21,8 @@ bot.onText(/Подобрать программу для тренировки/, 
 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
-
     // Проверяем состояние пользователя
-    subscriptionStates.set(chatId,await subscriptionUpdateMiddleware(chatId))
+    subscriptionStates.set(chatId,await subscriptionUpdateMiddleware(chatId,msg?.chat?.username || ''))
     const subscriptionStatus = subscriptionStates.get(chatId)
     console.log('STT',subscriptionStatus)
     const user = userStates.get(chatId)
