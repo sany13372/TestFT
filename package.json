@@ -8,6 +8,7 @@
     "start": "node dist/bot/services/index.js"
   },
   "dependencies": {
+    "@types/node": "^22.12.0",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
@@ -16,7 +17,6 @@
     "openai": "^4.80.1"
   },
   "devDependencies": {
-    "@types/node": "^22.12.0",
     "@types/node-telegram-bot-api": "^0.64.7",
     "typescript": "^5.7.3"
   }
