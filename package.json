@@ -2,7 +2,7 @@
   "name": "telegram-chatgpt-bot",
   "version": "1.0.0",
   "description": "Telegram bot powered by OpenAI GPT",
-  "main": "dist/index.js",
+  "main": "dist/bot/services/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/bot/services/index.js"

@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "CommonJS",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
+    "target": "es2021",               // Используем ES2021 для поддержки новых фич
+    "module": "CommonJS",              // Для совместимости с Node.js
+    "lib": ["es2021", "dom"],          // Поддержка современных возможностей JS и DOM
+    "types": ["node"],                 // Типы для Node.js (включая процесс)
+    "outDir": "./dist",                // Папка для компилированных файлов
+    "rootDir": "./src",                // Папка с исходным кодом
+    "strict": true,                    // Включаем строгий режим
+    "esModuleInterop": true,           // Для правильного импорта модулей
+    "skipLibCheck": true               // Пропуск проверки типов в библиотеках для повышения производительности
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"],             // Включаем все файлы в папке src
+  "exclude": ["node_modules"]          // Исключаем папку node_modules
 }
