@@ -4,6 +4,7 @@
     "module": "CommonJS",              // Для совместимости с Node.js
     "lib": ["es2021", "dom"],          // Поддержка современных возможностей JS и DOM
     "typeRoots": ["node_modules/@types"],
+    "types": ["node"],
     "outDir": "./dist",                // Папка для компилированных файлов
     "rootDir": "./src",                // Папка с исходным кодом
     "strict": true,                    // Включаем строгий режим
