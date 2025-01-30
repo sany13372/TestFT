@@ -1,0 +1,35 @@
+# Node.js
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Бинарные файлы и IDE-штуки
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Конфиги окружения
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# MongoDB (локальные базы, если используешь локальный сервер)
+data/
+dump/
+
+# Git & Render специфичные
+.git/
