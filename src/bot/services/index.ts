@@ -1,5 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api';
-
+import express from 'express';
 import {subscriptionHandler} from "../handlers/subscriptionHandler";
 import {startHandler} from "../handlers/startHandler";
 import {config} from "../../config/env";
@@ -8,6 +8,8 @@ import {options} from "../../utils/botOptions";
 import connectToDB from "../../db/db";
 import {subscriptionUpdateMiddleware} from "../middlewares/subscriptionMiddleware";
 
+const app = express();
+const port = 3000; // Указываем порт
 // Хранилище состояний в памяти
 const userStates = new Map<number, { awaitingChatGPTResponse: boolean, context: string,type:string,waitingForInput:boolean }>();
 const subscriptionStates = new Map<number, boolean>(); // true - подписан, false - не подписан
@@ -37,4 +39,13 @@ bot.on('message', async (msg) => {
         bot.sendMessage(chatId, "Нажмите на кнопку 'Подобрать программу для тренировки' или 'Подобрать правильное питание'",options);
         return;
     }
+});
+
+app.get('/', (req, res) => {
+    res.send('Сервер бота работает!');
+});
+
+// Запуск Express-сервера
+app.listen(port, () => {
+    console.log(`Сервер запущен на порту ${port}`);
 });
