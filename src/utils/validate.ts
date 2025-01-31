@@ -1,9 +1,7 @@
 export const parseWorkoutData = (input: string) => {
-    console.log('🔍 Получен ввод:', input);
 
     // Ищем ВСЕ числа (предположительно вес и рост)
     const numbers = (input.match(/\b\d{2,3}\b/g) || []).map(Number);
-    console.log('📊 Найденные числа:', numbers);
 
     let weight = null, height = null;
 
@@ -20,12 +18,10 @@ export const parseWorkoutData = (input: string) => {
         weight = numbers[0];
     }
 
-    console.log(`⚖️ Вес: ${weight}, 📏 Рост: ${height}`);
 
     // Удаляем числа из текста
     let textWithoutNumbers = input.replace(/\b\d{2,3}\b/g, '').trim();
 
-    console.log('📝 Оставшийся текст (без чисел):', textWithoutNumbers);
 
     // Ключевые слова для активности
     const activityKeywords = ['низкая', 'средняя', 'высокая', 'активный', 'умеренный', 'силовой', 'кардио'];
@@ -56,8 +52,6 @@ export const parseWorkoutData = (input: string) => {
             .join(' ') // Собираем в строку
             .trim();
     }
-
-    console.log(`🏋️‍♂️ Уровень активности: ${activityLevel}, 🎯 Цель: ${goal}`);
 
     return {
         weight,

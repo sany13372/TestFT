@@ -21,24 +21,33 @@ bot.onText(/\/subscribe/, subscriptionHandler(bot));
 bot.onText(/Подобрать правильное питание/, () => console.log(''));
 bot.onText(/Подобрать программу для тренировки/, (msg) => workoutHandler(bot,userStates)(msg))
 
+bot.on('polling_error', (error) => {
+    console.error('Polling error:', error);
+});
+
 bot.on('message', async (msg) => {
-    const chatId = msg.chat.id;
-    // Проверяем состояние пользователя
-    subscriptionStates.set(chatId,await subscriptionUpdateMiddleware(chatId,msg?.chat?.username || ''))
-    const subscriptionStatus = subscriptionStates.get(chatId)
-    console.log('STT',subscriptionStatus)
-    const user = userStates.get(chatId)
-    // Логика для проверки подписки
-    if (!user && msg.text !== 'Подобрать программу для тренировки' && msg.text !== 'Подобрать правильное питание') {
-        if (!subscriptionStatus) {
-            bot.sendMessage(chatId, 'Вам доступна только ограниченная версия программы тренировок (нажмите что бы протестировать на кнопку Подобрать программу для тренировки). Для получения полной версии оформите подписку через /subscribe.💰',options);
+    try {
+        const chatId = msg.chat.id;
+        // Проверяем состояние пользователя
+        subscriptionStates.set(chatId,await subscriptionUpdateMiddleware(chatId,msg?.chat?.username || ''))
+        const subscriptionStatus = subscriptionStates.get(chatId)
+        const user = userStates.get(chatId)
+        // Логика для проверки подписки
+        if (!user && msg.text !== 'Подобрать программу для тренировки' && msg.text !== 'Подобрать правильное питание') {
+            if (!subscriptionStatus) {
+                bot.sendMessage(chatId, 'Вам доступна только ограниченная версия программы тренировок (нажмите что бы протестировать на кнопку Подобрать программу для тренировки). Для получения полной версии оформите подписку через /subscribe.💰',options);
+                return;
+            }
+
+            // Если подписка активна, продолжаем
+            bot.sendMessage(chatId, "Нажмите на кнопку 'Подобрать программу для тренировки' или 'Подобрать правильное питание'",options);
             return;
         }
-
-        // Если подписка активна, продолжаем
-        bot.sendMessage(chatId, "Нажмите на кнопку 'Подобрать программу для тренировки' или 'Подобрать правильное питание'",options);
-        return;
     }
+    catch (error) {
+        console.error('Ошибка при обработке сообщения:', error);
+    }
+
 });
 
 app.get('/', (req, res) => {
@@ -48,4 +57,12 @@ app.get('/', (req, res) => {
 // Запуск Express-сервера
 app.listen(port, () => {
     console.log(`Сервер запущен на порту ${port}`);
+});
+
+bot.on('polling_error', (error) => {
+    console.error('Polling error:', error);
+});
+
+app.get('/wakeup', (req, res) => {
+    res.send('Сервер активен!');
 });

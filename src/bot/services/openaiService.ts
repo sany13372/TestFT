@@ -13,7 +13,6 @@ export const chatWithGPT = async (prompt: string) => {
 `
     try {
         const response = await openai.chat.completions.create({
-    // model: "gpt-3.5-turbo",
             model: 'gpt-4o-mini',  // Указываем модель GPT-4o mini
             store: true,
             messages: [
