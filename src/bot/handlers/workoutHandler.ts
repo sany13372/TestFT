@@ -28,7 +28,7 @@ export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { await
     userStates.set(chatId, { awaitingChatGPTResponse: false, context: '', type: 'workout', waitingForInput: true });
 
     // Отправляем сообщение с инструкциями
-    bot.sendMessage(chatId, 'Введите ваши параметры в формате: "вес: 70, рост: 175, активность: (высокая, низкая, средняя), цель: (похудеть, поддержание формы, набрать массу),количество тренировок в неделю: 3". \nПример: 70 170 4 высокая похудеть');
+    bot.sendMessage(chatId, 'Введите ваши параметры в формате: "вес: 70, рост: 175, активность: (высокая, низкая, средняя), цель: (похудение, поддержание формы, набор массы),количество тренировок в неделю: 3". \nПример: 70, 170, 4, высокая, набор массы');
 
     const messageHandler = async (msg: TelegramBot.Message) => {
         const chatId = msg.chat.id;
@@ -60,7 +60,7 @@ export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { await
                 bot.sendMessage(chatId, errText,options);
             }
         } else {
-            bot.sendMessage(chatId, '❌ Некоторые данные отсутствуют. Пожалуйста, убедитесь, что вы указали все параметры (вес, рост, активность и цель) или попробуйте ввести по примеру: 70 170 4 высокая похудеть.');
+            bot.sendMessage(chatId, '❌ Некоторые данные отсутствуют. Пожалуйста, убедитесь, что вы указали все параметры (вес, рост, активность и цель) или попробуйте ввести по примеру: 70, 170, 4, высокая, похудение.');
             // Важный момент: оставляем обработчик активным до получения правильных данных
             bot.once('message', messageHandler); // Только один раз
         }
