@@ -3,11 +3,15 @@ import {chatWithGPT} from "../services/openaiService";
 import {
     additionalTextTrainer,
     frontTextTrainner,
-    promptDescTrainer
+    subscribePrompt,
+    notSubscribePrompt
 } from "../../utils/promtsText";
 import {parseWorkoutData} from "../../utils/validate";
 import {subscriptionUpdateMiddleware} from "../middlewares/subscriptionMiddleware";
 import {options} from "../../utils/botOptions";
+import {sendLongMessage} from "../../utils/sendLongMessage";
+
+
 
 export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { awaitingChatGPTResponse: boolean, context: string, type: string, waitingForInput: boolean }>) => async (msg: TelegramBot.Message) => {
     const chatId = msg.chat.id;
@@ -24,7 +28,7 @@ export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { await
     userStates.set(chatId, { awaitingChatGPTResponse: false, context: '', type: 'workout', waitingForInput: true });
 
     // Отправляем сообщение с инструкциями
-    bot.sendMessage(chatId, 'Введите ваши параметры в формате: "вес: 70, рост: 175, активность: (высокая, низкая), цель: (похудеть, набрать массу)".');
+    bot.sendMessage(chatId, 'Введите ваши параметры в формате: "вес: 70, рост: 175, активность: (высокая, низкая, средняя), цель: (похудеть, поддержание формы, набрать массу),количество тренировок в неделю: 3". \nПример: 70 170 4 высокая похудеть');
 
     const messageHandler = async (msg: TelegramBot.Message) => {
         const chatId = msg.chat.id;
@@ -36,7 +40,7 @@ export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { await
         const userInput = msg.text?.trim();
         const parsedData = parseWorkoutData(userInput || '');
         const errText = 'Произошла ошибка. Попробуйте еще раз.'
-        if (parsedData.weight && parsedData.height && parsedData.activityLevel && parsedData.goal) {
+        if (parsedData.weight && parsedData.height && parsedData.activityLevel && parsedData.goal && parsedData.workoutCount) {
             const typingInterval = setInterval(() => {
                 bot.sendChatAction(chatId, 'typing');
             }, 4000);
@@ -44,20 +48,19 @@ export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { await
                 userStates.set(chatId, { awaitingChatGPTResponse: true, context: '', type: 'workout', waitingForInput: false });
 
                 await bot.sendChatAction(chatId, 'typing');
-                const prompt = `Ты профессиональный фитнес-тренер. Составь ${promptDescTrainer(isSubscribe)} тренировочную программу для меня с весом ${parsedData.weight} кг, ростом ${parsedData.height} см, уровнем активности ${parsedData.activityLevel} и целью ${parsedData.goal}.`;
-                const response = await chatWithGPT(prompt);
+                const promptGpt = isSubscribe ? subscribePrompt(parsedData) : notSubscribePrompt(parsedData)
+                const response = await chatWithGPT(promptGpt);
                 clearInterval(typingInterval); // Останавливаем 'typing', когда получили ответ
                 //@ts-ignore
-                const finalText = ` ${frontTextTrainner(parsedData,msg.chat.first_name)}\n${response}\n\n${!isSubscribe ? additionalTextTrainer(isSubscribe) : ''}`;
-
-                bot.sendMessage(chatId, response ? finalText : errText,options);
+                const finalText = `${frontTextTrainner(parsedData,msg.chat.first_name)}\n${response}\n\n${!isSubscribe ? additionalTextTrainer(isSubscribe) : ''}`;
+                await sendLongMessage(bot,chatId,response ? finalText : errText)
                 userStates.delete(chatId); // Удаляем состояние после выполнения
             } catch (er) {
                 clearInterval(typingInterval); // Останавливаем 'typing' при ошибке
                 bot.sendMessage(chatId, errText,options);
             }
         } else {
-            bot.sendMessage(chatId, '❌ Некоторые данные отсутствуют. Пожалуйста, убедитесь, что вы указали все параметры (вес, рост, активность и цель).');
+            bot.sendMessage(chatId, '❌ Некоторые данные отсутствуют. Пожалуйста, убедитесь, что вы указали все параметры (вес, рост, активность и цель) или попробуйте ввести по примеру: 70 170 4 высокая похудеть.');
             // Важный момент: оставляем обработчик активным до получения правильных данных
             bot.once('message', messageHandler); // Только один раз
         }

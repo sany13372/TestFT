@@ -4,7 +4,6 @@ export const subscriptionUpdateMiddleware = async (chatId: number,userName:strin
     // Проверяем наличие пользователя в базе данных и его статус подписки
     const user = await addUserToDB(chatId,userName);
     const subscriptionStatus = user?.subscription || false; // Получаем статус подписки
-
     // Обновляем состояние подписки
     return subscriptionStatus;
 };

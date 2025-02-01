@@ -18,7 +18,6 @@ connectToDB();
 
 bot.onText(/\/start/, startHandler(bot));
 bot.onText(/\/subscribe/, subscriptionHandler(bot));
-bot.onText(/Подобрать правильное питание/, () => console.log(''));
 bot.onText(/Подобрать программу для тренировки/, (msg) => workoutHandler(bot,userStates)(msg))
 
 bot.on('polling_error', (error) => {
@@ -33,14 +32,14 @@ bot.on('message', async (msg) => {
         const subscriptionStatus = subscriptionStates.get(chatId)
         const user = userStates.get(chatId)
         // Логика для проверки подписки
-        if (!user && msg.text !== 'Подобрать программу для тренировки' && msg.text !== 'Подобрать правильное питание') {
+        if (!user && msg.text !== 'Подобрать программу для тренировки') {
             if (!subscriptionStatus) {
                 bot.sendMessage(chatId, 'Вам доступна только ограниченная версия программы тренировок (нажмите что бы протестировать на кнопку Подобрать программу для тренировки). Для получения полной версии оформите подписку через /subscribe.💰',options);
                 return;
             }
 
             // Если подписка активна, продолжаем
-            bot.sendMessage(chatId, "Нажмите на кнопку 'Подобрать программу для тренировки' или 'Подобрать правильное питание'",options);
+            bot.sendMessage(chatId, "Нажмите на кнопку 'Подобрать программу для тренировки'",options);
             return;
         }
     }

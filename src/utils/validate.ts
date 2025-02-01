@@ -1,59 +1,48 @@
 export const parseWorkoutData = (input: string) => {
+    // Извлекаем ВСЕ числа (кол-во тренировок, вес, рост)
+    const numbers = (input.match(/\b\d{1,3}\b/g) || []).map(Number);
 
-    // Ищем ВСЕ числа (предположительно вес и рост)
-    const numbers = (input.match(/\b\d{2,3}\b/g) || []).map(Number);
+    let workoutCount: number | null = null;
+    let weight: number | null = null;
+    let height: number | null = null;
 
-    let weight = null, height = null;
+    if (numbers.length === 3) {
+        // Самое маленькое — количество тренировок, среднее — вес, самое большое — рост
+        numbers.sort((a, b) => a - b);
+        [workoutCount, weight, height] = numbers;
+    } else if (numbers.length === 2) {
+        // Если введено два числа, предполагаем, что это вес и рост
+        [weight, height] = numbers.sort((a, b) => a - b);
 
-    if (numbers.length >= 2) {
-        const [num1, num2] = numbers;
-        if (num1 < num2) {
-            weight = num1;
-            height = num2;
-        } else {
-            weight = num2;
-            height = num1;
-        }
-    } else if (numbers.length === 1) {
-        weight = numbers[0];
+        // Пользователь не указал количество тренировок — оставляем null
     }
-
 
     // Удаляем числа из текста
-    let textWithoutNumbers = input.replace(/\b\d{2,3}\b/g, '').trim();
+    let textWithoutNumbers = input.replace(/\b\d{1,3}\b/g, '').trim();
 
-
-    // Ключевые слова для активности
-    const activityKeywords = ['низкая', 'средняя', 'высокая', 'активный', 'умеренный', 'силовой', 'кардио'];
-
-    // Разделяем текст на слова
-    let words = textWithoutNumbers.split(/\s+/).filter(Boolean);
-
-    let activityLevel = null;
-    let goal = null;
-
-    // Ищем слово "активность" и берем следующее за ним слово как уровень активности
-    const activityIndex = words.findIndex(word => word.toLowerCase() === 'активность');
-    if (activityIndex !== -1 && activityIndex + 1 < words.length) {
-        const nextWord = words[activityIndex + 1];
-        if (activityKeywords.includes(nextWord.toLowerCase())) {
-            activityLevel = nextWord; // Сохраняем уровень активности (например, "высокая")
-            words.splice(activityIndex, 2); // Удаляем "активность" и уровень активности
+    // Определяем уровень активности
+    const activityKeywords = ['низкая', 'средняя', 'высокая'];
+    let activityLevel: string | null = null;
+    for (const keyword of activityKeywords) {
+        if (textWithoutNumbers.toLowerCase().includes(keyword)) {
+            activityLevel = keyword;
+            textWithoutNumbers = textWithoutNumbers.replace(keyword, '').trim();
+            break;
         }
     }
 
-    // Ищем цель
-    const goalIndex = words.findIndex(word => word.toLowerCase() === 'цель');
-    if (goalIndex !== -1) {
-        // Берем все слова после "цель" и исключаем ключевые слова активности
-        goal = words
-            .slice(goalIndex + 1) // Берем все после "цель"
-            .filter(word => !activityKeywords.includes(word.toLowerCase())) // Исключаем ключевые слова активности
-            .join(' ') // Собираем в строку
-            .trim();
+    // Определяем цель
+    const goalKeywords = ['набрать массу', 'похудеть', 'поддержание формы'];
+    let goal: string | null = null;
+    for (const keyword of goalKeywords) {
+        if (textWithoutNumbers.toLowerCase().includes(keyword)) {
+            goal = keyword;
+            break;
+        }
     }
 
     return {
+        workoutCount,
         weight,
         height,
         activityLevel,

@@ -1,8 +1,7 @@
 export  const options = {
     reply_markup: {
         keyboard: [
-            [{ text: 'Подобрать программу для тренировки' }],
-            [{ text: 'Подобрать правильное питание' }],
+            [{ text: 'Подобрать программу для тренировки' }]
         ],
         resize_keyboard: true,
         one_time_keyboard: true,

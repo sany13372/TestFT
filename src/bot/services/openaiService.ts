@@ -16,14 +16,14 @@ export const chatWithGPT = async (prompt: string) => {
             model: 'gpt-4o-mini',  // Указываем модель GPT-4o mini
             store: true,
             messages: [
-                { role: "system", content: 'Запомни любое сообщение что ты мне присылаешь не должно быть больше 4000 символов!' },
+                { role: "system", content: 'Запомни любое сообщение что ты мне присылаешь не должно быть больше 3500 символов!' },
                 {
                     role: "user",
                     content: prompt,
                 },
             ],
 });
-        return response.choices[0].message.content
+        return response.choices[0].message.content || ''
     } catch (error) {
         console.error('Ошибка при запросе к Фитнес Боту', error);
         return null;
