@@ -65,9 +65,6 @@ export const parseWorkoutData = (input: string) => {
     lines = lines.filter(line => line.length > 0);
 
     // Проверяем, что введено ровно 5 параметров
-    if (lines.length !== 5) {
-        throw new Error('Некорректный ввод. Введите 5 параметров в правильном порядке: Вес, Рост, Активность, Цель, Количество тренировок.');
-    }
 
     // Обрабатываем параметры
     const weight = Number(lines[0]);
@@ -77,21 +74,12 @@ export const parseWorkoutData = (input: string) => {
     const workoutCount = Number(lines[4]);
 
     // Проверка корректности числовых значений
-    if (isNaN(weight) || isNaN(height) || isNaN(workoutCount)) {
-        throw new Error('Некорректный ввод. Вес, рост и количество тренировок должны быть числами.');
-    }
 
     // Проверка корректности уровня активности
     const validActivityLevels = ['высокая', 'средняя', 'низкая'];
-    if (!validActivityLevels.includes(activityLevel)) {
-        throw new Error('Некорректный ввод. Уровень активности должен быть: "высокая", "средняя" или "низкая".');
-    }
 
     // Проверка корректности цели
     const validGoals = ['похудение', 'набор массы', 'поддержание формы'];
-    if (!validGoals.includes(goal)) {
-        throw new Error('Некорректный ввод. Цель должна быть: "похудение", "набор массы" или "поддержание формы".');
-    }
 
     return {
         weight,
