@@ -50,7 +50,7 @@
 //     };
 // };
 
-export const parseWorkoutData = (input: string) => {
+export const parseWorkoutData = (bot:any,chatId:number,input: string) => {
     let lines: string[];
 
     if (input.includes(',')) {
@@ -65,6 +65,10 @@ export const parseWorkoutData = (input: string) => {
     lines = lines.filter(line => line.length > 0);
 
     // Проверяем, что введено ровно 5 параметров
+    if (lines.length !== 5) {
+        bot.sendMessage(chatId,'Некорректный ввод. Введите 5 параметров в правильном порядке: Вес, Рост, Активность, Цель, Количество тренировок.')
+        return
+    }
 
     // Обрабатываем параметры
     const weight = Number(lines[0]);
@@ -74,12 +78,24 @@ export const parseWorkoutData = (input: string) => {
     const workoutCount = Number(lines[4]);
 
     // Проверка корректности числовых значений
+    if (isNaN(weight) || isNaN(height) || isNaN(workoutCount)) {
+        bot.sendMessage(chatId,'Некорректный ввод. Вес, рост и количество тренировок должны быть числами.')
+        return
+    }
 
     // Проверка корректности уровня активности
     const validActivityLevels = ['высокая', 'средняя', 'низкая'];
+    if (!validActivityLevels.includes(activityLevel)) {
+        bot.sendMessage(chatId,'Некорректный ввод. Уровень активности должен быть: "высокая", "средняя" или "низкая".')
+        return
+    }
 
     // Проверка корректности цели
     const validGoals = ['похудение', 'набор массы', 'поддержание формы'];
+    if (!validGoals.includes(goal)) {
+        bot.sendMessage(chatId,'Некорректный ввод. Цель должна быть: "похудение", "набор массы" или "поддержание формы".')
+        return
+    }
 
     return {
         weight,
