@@ -38,9 +38,9 @@ export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { await
         if (!userState || !userState.waitingForInput) return;
 
         const userInput = msg.text?.trim();
-        const parsedData = parseWorkoutData(userInput || '');
+        const parsedData = parseWorkoutData(bot,chatId,userInput || '');
         const errText = 'Произошла ошибка. Попробуйте еще раз.'
-        if (parsedData.weight && parsedData.height && parsedData.activityLevel && parsedData.goal && parsedData.workoutCount) {
+        if (parsedData && parsedData.weight && parsedData.height && parsedData.activityLevel && parsedData.goal && parsedData.workoutCount) {
             const typingInterval = setInterval(() => {
                 bot.sendChatAction(chatId, 'typing');
             }, 4000);
