@@ -9,7 +9,7 @@ export const addUserToDB = async (chatId: number,userName:string) => {
             return existingUser; // Возвращаем существующего пользователя
         }
         // Создание нового пользователя с дефолтными значениями
-        const newUser = new User({ chatId, subscription: false, usageCount: 0,userName:userName });
+        const newUser = new User({ chatId, subscription: false, dateSubscription:'', usageCount: 0, userName:userName });
 
         // Сохранение пользователя в базе данных
         await newUser.save();
@@ -31,5 +31,25 @@ export const incrementUsageCount = async (chatId: number) => {
         }
     } catch (error) {
         console.error('Error incrementing usage count:', error);
+    }
+};
+
+export const updateUserSubscription = async (chatId: number, dateSubscription: string | null) => {
+    try {
+        // Обновляем дату подписки у пользователя
+        const updatedUser = await User.findOneAndUpdate(
+            { chatId }, // Поиск по chatId
+            { dateSubscription }, // Обновление поля dateSubscription
+            { new: true } // Возвращает обновленный документ
+        );
+
+        if (updatedUser) {
+            console.log(`Subscription updated for user ${chatId}: ${dateSubscription}`);
+            return updatedUser;
+        } else {
+            console.log(`User ${chatId} not found`);
+        }
+    } catch (error) {
+        console.error(`Error updating subscription for user ${chatId}:`, error);
     }
 };

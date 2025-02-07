@@ -5,6 +5,7 @@ export interface IUser extends Document {
     chatId: number;
     userName:string
     subscription: boolean; // true - подписка есть, false - нет
+    dateSubscription:string
     usageCount: number; // количество использований
 }
 
@@ -13,6 +14,7 @@ const userSchema: Schema<IUser> = new Schema({
     chatId: { type: Number, required: true, unique: true }, // chatId для уникальной идентификации пользователя
     userName: { type: String, required: true, unique: true }, // chatId для уникальной идентификации пользователя
     subscription: { type: Boolean, default: false }, // по умолчанию без подписки
+    dateSubscription: { type: String, default: '' }, // по умолчанию без подписки
     usageCount: { type: Number, default: 0 }, // по умолчанию 0
 });
 
