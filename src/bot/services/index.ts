@@ -17,7 +17,6 @@ const bot = new TelegramBot(config.BOT_TOKEN, { polling: true });
 connectToDB();
 
 bot.onText(/\/start/, startHandler(bot));
-bot.onText(/\/subscribe/, subscriptionHandler(bot));
 bot.onText(/Подобрать программу для тренировки/, (msg) => workoutHandler(bot,userStates)(msg))
 
 bot.on('polling_error', (error) => {
