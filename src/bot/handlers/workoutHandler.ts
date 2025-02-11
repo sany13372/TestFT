@@ -15,7 +15,7 @@ import {sendLongMessage} from "../../utils/sendLongMessage";
 
 export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { awaitingChatGPTResponse: boolean, context: string, type: string, waitingForInput: boolean }>) => async (msg: TelegramBot.Message) => {
     const chatId = msg.chat.id;
-    const isSubscribe = await subscriptionUpdateMiddleware(chatId,msg?.chat?.username || '') || false;
+    const isSubscribe = await subscriptionUpdateMiddleware(msg) || false;
 
     // Проверяем, если пользователь уже в процессе ввода данных
     const existingState = userStates.get(chatId);

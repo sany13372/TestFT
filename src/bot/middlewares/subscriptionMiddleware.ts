@@ -5,9 +5,9 @@ const parseDate = (dateStr: string): Date => {
     return new Date(year, month - 1, day); // month - 1, так как месяцы в JS начинаются с 0
 };
 
-export const subscriptionUpdateMiddleware = async (chatId: number,userName:string) => {
+export const subscriptionUpdateMiddleware = async (msg:any) => {
     // Проверяем наличие пользователя в базе данных и его статус подписки
-    const user = await addUserToDB(chatId,userName);
+    const user = await addUserToDB(msg);
 
     if (!user || !user.dateSubscription) return false; // Если нет данных, подписки нет
     const currentDate = new Date();
@@ -17,7 +17,7 @@ export const subscriptionUpdateMiddleware = async (chatId: number,userName:strin
         return true; // Подписка активна, ничего не меняем
     } else {
         // Подписка истекла, очищаем поле в БД
-        await updateUserSubscription(chatId, '');
+        await updateUserSubscription(msg.chat.id, '');
         return false; // Подписка закончилась
     }
 };

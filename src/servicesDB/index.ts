@@ -1,15 +1,34 @@
 import User from "../db/userModel";
 
-export const addUserToDB = async (chatId: number,userName:string) => {
+export const addUserToDB = async (msg:any) => {
+    const chatId = msg.chat.id;
+    const firstName = msg.chat.first_name;
+    const lastName = msg.chat.last_name || '';
+    const username = msg.chat.username || '';
+
+    const userData = {
+        chatId,
+        firstName,
+        lastName,
+        username,
+        subscription: false,
+        dateSubscription:'',
+        usageCount: 0,
+    };
     try {
         // Проверка на существование пользователя
         const existingUser = await User.findOne({ chatId });
         if (existingUser) {
-            console.log('User already exists');
-            return existingUser; // Возвращаем существующего пользователя
+            await User.findOneAndUpdate(
+                { chatId }, // Поиск по chatId
+                { firstName },
+                { new: true } // Возвращает обновленный документ
+            );
+            return existingUser
         }
+
         // Создание нового пользователя с дефолтными значениями
-        const newUser = new User({ chatId, subscription: false, dateSubscription:'', usageCount: 0, userName:userName });
+        const newUser = new User(userData);
 
         // Сохранение пользователя в базе данных
         await newUser.save();

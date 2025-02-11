@@ -1,6 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api';
 import express from 'express';
-import {subscriptionHandler} from "../handlers/subscriptionHandler";
 import {startHandler} from "../handlers/startHandler";
 import {config} from "../../config/env";
 import {workoutHandler} from "../handlers/workoutHandler";
@@ -10,7 +9,6 @@ import {subscriptionUpdateMiddleware} from "../middlewares/subscriptionMiddlewar
 
 const app = express();
 const port = 3000; // Указываем порт
-// Хранилище состояний в памяти
 const userStates = new Map<number, { awaitingChatGPTResponse: boolean, context: string,type:string,waitingForInput:boolean }>();
 const subscriptionStates = new Map<number, boolean>(); // true - подписан, false - не подписан
 const bot = new TelegramBot(config.BOT_TOKEN, { polling: true });
@@ -21,13 +19,18 @@ bot.onText(/Подобрать программу для тренировки/, 
 
 bot.on('polling_error', (error) => {
     console.error('Polling error:', error);
+    setTimeout(() => {
+        console.log('Перезапуск Long Polling...');
+        bot.stopPolling(); // Останавливаем текущий Long Polling
+        bot.startPolling(); // Запускаем заново
+    }, 5000);
 });
 
 bot.on('message', async (msg) => {
     try {
         const chatId = msg.chat.id;
         // Проверяем состояние пользователя
-        subscriptionStates.set(chatId,await subscriptionUpdateMiddleware(chatId,msg?.chat?.username || ''))
+        subscriptionStates.set(chatId,await subscriptionUpdateMiddleware(msg))
         const subscriptionStatus = subscriptionStates.get(chatId)
         const user = userStates.get(chatId)
         // Логика для проверки подписки
@@ -65,10 +68,6 @@ app.get('/', (req, res) => {
 // Запуск Express-сервера
 app.listen(port, () => {
     console.log(`Сервер запущен на порту ${port}`);
-});
-
-bot.on('polling_error', (error) => {
-    console.error('Polling error:', error);
 });
 
 app.get('/wakeup', (req, res) => {
