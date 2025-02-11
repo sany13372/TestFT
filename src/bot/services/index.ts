@@ -25,8 +25,13 @@ bot.setWebHook(webhookUrl)
 
 // Обработка входящих обновлений через вебхук
 app.post(`/bot${config.BOT_TOKEN}`, (req, res) => {
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
+    try {
+        bot.processUpdate(req.body);
+        res.sendStatus(200);
+    } catch (error) {
+        console.error('Ошибка при обработке обновления:', error);
+        res.sendStatus(500);
+    }
 });
 bot.onText(/\/start/, startHandler(bot));
 bot.onText(/Подобрать программу для тренировки/, (msg) => workoutHandler(bot,userStates)(msg))
