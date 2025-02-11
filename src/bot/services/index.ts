@@ -11,20 +11,25 @@ const app = express();
 const port = 3000; // Указываем порт
 const userStates = new Map<number, { awaitingChatGPTResponse: boolean, context: string,type:string,waitingForInput:boolean }>();
 const subscriptionStates = new Map<number, boolean>(); // true - подписан, false - не подписан
-const bot = new TelegramBot(config.BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(config.BOT_TOKEN);
 connectToDB();
 
+const webhookUrl = `https://testft.onrender.com/bot${config.BOT_TOKEN}`;
+bot.setWebHook(webhookUrl)
+    .then(() => {
+        console.log(`Вебхук установлен на ${webhookUrl}`);
+    })
+    .catch((error) => {
+        console.error('Ошибка при установке вебхука:', error);
+    });
+
+// Обработка входящих обновлений через вебхук
+app.post(`/bot${config.BOT_TOKEN}`, (req, res) => {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+});
 bot.onText(/\/start/, startHandler(bot));
 bot.onText(/Подобрать программу для тренировки/, (msg) => workoutHandler(bot,userStates)(msg))
-
-bot.on('polling_error', (error) => {
-    console.error('Polling error:', error);
-    setTimeout(() => {
-        console.log('Перезапуск Long Polling...');
-        bot.stopPolling(); // Останавливаем текущий Long Polling
-        bot.startPolling(); // Запускаем заново
-    }, 5000);
-});
 
 bot.on('message', async (msg) => {
     try {
