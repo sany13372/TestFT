@@ -12,7 +12,6 @@ export const subscriptionUpdateMiddleware = async (msg:any) => {
     if (!user || !user.dateSubscription) return false; // Если нет данных, подписки нет
     const currentDate = new Date();
     const subscriptionDate = parseDate(user.dateSubscription); // Парсим дату подписки
-
     if (subscriptionDate > currentDate) {
         return true; // Подписка активна, ничего не меняем
     } else {

@@ -35,9 +35,7 @@ export const workoutHandler = (bot: TelegramBot, userStates: Map<number, { await
         const userState = userStates.get(chatId);
 
         if (!userState || !userState.waitingForInput) return;
-        console.log('MM',msg.text)
         const userInput = msg.text?.trim();
-        console.log('TEX',userInput)
         const parsedData = parseWorkoutData(bot,chatId,userInput || '');
         const errText = 'Произошла ошибка. Попробуйте еще раз.'
         if (parsedData && parsedData.weight && parsedData.height && parsedData.activityLevel && parsedData.goal && parsedData.workoutCount) {

@@ -3,14 +3,13 @@ import User from "../db/userModel";
 export const addUserToDB = async (msg:any) => {
     const chatId = msg.chat.id;
     const firstName = msg.chat.first_name;
-    const lastName = msg.chat.last_name || '';
-    const username = msg.chat.username || '';
-
+    const lastName = msg.chat.last_name || 'defaultLast';
+    const userName = msg.chat.username || 'defaultUsername';
     const userData = {
         chatId,
         firstName,
         lastName,
-        username,
+        userName,
         subscription: false,
         dateSubscription:'',
         usageCount: 0,
@@ -21,7 +20,7 @@ export const addUserToDB = async (msg:any) => {
         if (existingUser) {
             await User.findOneAndUpdate(
                 { chatId }, // Поиск по chatId
-                { firstName },
+                { firstName, userName },
                 { new: true } // Возвращает обновленный документ
             );
             return existingUser
