@@ -31,6 +31,8 @@ bot.onText(/\/start/, startHandler(bot));
 bot.onText(/Подобрать программу для тренировки/, (msg) => workoutHandler(bot,userStates)(msg))
 
 bot.on('message', async (msg) => {
+    console.log('✅ Получено текстовое сообщение:', JSON.stringify(msg, null, 2));
+
     try {
         const chatId = msg.chat.id;
         // Проверяем состояние пользователя
@@ -67,19 +69,22 @@ bot.on('message', async (msg) => {
 
 app.post(`/bot${config.BOT_TOKEN}`, (req, res) => {
     try {
-        console.log('Полученные данные от Telegram:', JSON.stringify(req.body));
+        console.log('🔹 Полученные данные от Telegram:', JSON.stringify(req.body, null, 2));
 
         if (!req.body || Object.keys(req.body).length === 0) {
-            throw new Error('Пустой запрос или некорректные данные');
+            throw new Error('⚠️ Пустой запрос или некорректные данные');
         }
 
         bot.processUpdate(req.body);
-        res.sendStatus(200);
+        console.log('✅ bot.processUpdate успешно вызван');
+
+        res.sendStatus(200); // Всегда отправляем 200 OK
     } catch (error) {
-        console.error('Ошибка при обработке обновления:', error);
-        res.sendStatus(500);
+        console.error('❌ Ошибка при обработке обновления:', error);
+        res.sendStatus(200); // НЕ 500, иначе Telegram отключит вебхук
     }
-})
+});
+
 
 app.get('/', (req, res) => {
     res.send('Сервер бота работает!');
