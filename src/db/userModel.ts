@@ -14,7 +14,7 @@ export interface IUser extends Document {
 // Создание схемы для пользователя
 const userSchema: Schema<IUser> = new Schema({
     chatId: { type: Number, required: true, unique: true }, // chatId для уникальной идентификации пользователя
-    userName: { type: String, unique: true }, // chatId для уникальной идентификации пользователя
+    userName: { type: String}, // chatId для уникальной идентификации пользователя
     firstName: { type: String },
     lastName: { type: String },
     subscription: { type: Boolean, default: false }, // по умолчанию без подписки
