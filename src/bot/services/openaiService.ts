@@ -1,10 +1,9 @@
 import OpenAI from 'openai';
+import {config} from "../../config/env";
 
 const openai = new OpenAI({
-    apiKey: "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",
+    apiKey: config.OPENAI_API_KEY,
 });
-//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
-
 
 export const chatWithGPT = async (prompt: string) => {
     const content =  `
@@ -29,19 +28,3 @@ export const chatWithGPT = async (prompt: string) => {
         return null;
     }
 };
-
-// import OpenAI from "openai";
-//
-// const openai = new OpenAI({
-//     apiKey: "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",
-// });
-//
-// const completion = openai.chat.completions.create({
-//     model: "gpt-4o-mini",
-//     store: true,
-//     messages: [
-//         {"role": "user", "content": "write a haiku about ai"},
-//     ],
-// });
-//
-// completion.then((result) => console.log(result.choices[0].message));
