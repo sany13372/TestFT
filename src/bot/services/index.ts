@@ -8,6 +8,8 @@ import connectToDB from "../../db/db";
 import {subscriptionUpdateMiddleware} from "../middlewares/subscriptionMiddleware";
 
 const app = express();
+app.use(express.json()); // Добавь это, если его нет
+
 const port = 3000; // Указываем порт
 const userStates = new Map<number, { awaitingChatGPTResponse: boolean, context: string,type:string,waitingForInput:boolean }>();
 const subscriptionStates = new Map<number, boolean>(); // true - подписан, false - не подписан
@@ -26,13 +28,20 @@ bot.setWebHook(webhookUrl)
 // Обработка входящих обновлений через вебхук
 app.post(`/bot${config.BOT_TOKEN}`, (req, res) => {
     try {
+        console.log('Полученные данные от Telegram:', JSON.stringify(req.body));
+
+        if (!req.body || Object.keys(req.body).length === 0) {
+            throw new Error('Пустой запрос или некорректные данные');
+        }
+
         bot.processUpdate(req.body);
         res.sendStatus(200);
     } catch (error) {
         console.error('Ошибка при обработке обновления:', error);
         res.sendStatus(500);
     }
-});
+})
+
 bot.onText(/\/start/, startHandler(bot));
 bot.onText(/Подобрать программу для тренировки/, (msg) => workoutHandler(bot,userStates)(msg))
 
